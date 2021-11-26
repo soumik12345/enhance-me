@@ -1,10 +1,9 @@
-import tensorflow as tf
 from tensorflow.keras import layers, Input, Model
 
 from .recursive_residual_blocks import recursive_residual_group
 
 
-def mirnet_model(num_rrg, num_mrb, channels):
+def build_mirnet_model(num_rrg, num_mrb, channels):
     input_tensor = Input(shape=[None, None, 3])
     x1 = layers.Conv2D(channels, kernel_size=(3, 3), padding="same")(input_tensor)
     for _ in range(num_rrg):
