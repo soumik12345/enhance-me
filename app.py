@@ -1,11 +1,10 @@
 from PIL import Image
 import streamlit as st
-from tensorflow.keras import utils
+from tensorflow.keras import utils, backend
 
 from enhance_me.mirnet import MIRNet
 
 
-@st.cache(allow_output_mutation=True)
 def get_mirnet_object() -> MIRNet:
     mirnet = MIRNet()
     mirnet.build_model()
@@ -34,6 +33,7 @@ def main():
                 mirnet = get_mirnet_object()
                 enhanced_image = mirnet.infer(original_image)
                 st.image(enhanced_image, caption="enhanced image")
+                backend.clear_session()
 
 
 if __name__ == "__main__":
