@@ -103,7 +103,7 @@ class MIRNet:
         log_dir = os.path.join(
             self.experiment_name,
             "logs",
-            datetime.datetime.now().strftime("%Y%m%d-%H%M%S"),
+            datetime.now().strftime("%Y%m%d-%H%M%S"),
         )
         tensorboard_callback = keras.callbacks.TensorBoard(log_dir, histogram_freq=1)
         model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
