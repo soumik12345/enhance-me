@@ -1,8 +1,8 @@
 ---
 title: Enhance Me
 emoji: 🌖
-colorFrom: red
-colorTo: blue
+colorFrom: pink
+colorTo: pink
 sdk: streamlit
 app_file: app.py
 pinned: false
