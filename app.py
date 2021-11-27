@@ -5,7 +5,7 @@ from tensorflow.keras import utils
 from enhance_me.mirnet import MIRNet
 
 
-@st.cache
+@st.cache(allow_output_mutation=True)
 def get_mirnet_object() -> MIRNet:
     mirnet = MIRNet()
     mirnet.build_model()
