@@ -5,7 +5,7 @@ from typing import List
 from datetime import datetime
 
 from tensorflow import keras
-from tensorflow.keras import optimizers, models
+from tensorflow.keras import optimizers, models, mixed_precision
 
 from wandb.keras import WandbCallback
 
@@ -59,12 +59,16 @@ class MIRNet:
 
     def build_model(
         self,
+        use_mixed_precision: bool = False,
         num_recursive_residual_groups: int = 3,
         num_multi_scale_residual_blocks: int = 2,
         channels: int = 64,
         learning_rate: float = 1e-4,
         epsilon: float = 1e-3,
     ):
+        if use_mixed_precision:
+            policy = mixed_precision.Policy("mixed_float16")
+            mixed_precision.set_global_policy(policy)
         self.model = build_mirnet_model(
             num_rrg=num_recursive_residual_groups,
             num_mrb=num_multi_scale_residual_blocks,
