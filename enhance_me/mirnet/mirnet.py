@@ -35,8 +35,13 @@ class MIRNet:
     ) -> None:
         self.experiment_name = experiment_name
         if dataset_label == "lol":
-            (low_images, enhanced_images), (self.test_low_images, self.test_enhanced_images) = download_lol_dataset()
-            self._build_datasets(low_images, enhanced_images, )
+            (low_images, enhanced_images), (
+                self.test_low_images,
+                self.test_enhanced_images,
+            ) = download_lol_dataset()
+            self._build_datasets(
+                low_images, enhanced_images, val_split=val_split, batch_size=batch_size
+            )
         self.data_loader = LowLightDataset(
             image_size=image_size,
             apply_random_horizontal_flip=apply_random_horizontal_flip,
