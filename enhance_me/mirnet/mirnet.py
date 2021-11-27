@@ -26,6 +26,8 @@ class MIRNet:
         experiment_name: str,
         image_size: int = 256,
         dataset_label: str = "lol",
+        val_split: float = 0.2,
+        batch_size: int = 16,
         apply_random_horizontal_flip: bool = True,
         apply_random_vertical_flip: bool = True,
         apply_random_rotation: bool = True,
@@ -33,7 +35,8 @@ class MIRNet:
     ) -> None:
         self.experiment_name = experiment_name
         if dataset_label == "lol":
-            download_lol_dataset()
+            (low_images, enhanced_images), (self.test_low_images, self.test_enhanced_images) = download_lol_dataset()
+            self._build_datasets(low_images, enhanced_images, )
         self.data_loader = LowLightDataset(
             image_size=image_size,
             apply_random_horizontal_flip=apply_random_horizontal_flip,
@@ -46,7 +49,7 @@ class MIRNet:
         else:
             self.using_wandb = False
 
-    def build_datasets(
+    def _build_datasets(
         self,
         low_light_images: List[str],
         enhanced_images: List[str],
