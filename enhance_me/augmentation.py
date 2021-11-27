@@ -44,7 +44,7 @@ class AugmentationFactory:
             ),
         )
 
-    def random_rotate(input_image, enhanced_image):
+    def random_rotate(self, input_image, enhanced_image):
         condition = tf.random.uniform(shape=(), maxval=4, dtype=tf.int32)
         return tf.image.rot90(input_image, condition), tf.image.rot90(
             enhanced_image, condition
