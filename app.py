@@ -30,8 +30,12 @@ def main():
             if uploaded_file is not None:
                 original_image = Image.open(uploaded_file)
                 st.image(original_image, caption="original image")
+                st.sidebar.info("Loading MIRNet...")
                 mirnet = get_mirnet_object()
+                st.sidebar.info("Done!")
+                st.sidebar.info("Processing Image...")
                 enhanced_image = mirnet.infer(original_image)
+                st.sidebar.info("Done!")
                 st.image(enhanced_image, caption="enhanced image")
                 backend.clear_session()
 
