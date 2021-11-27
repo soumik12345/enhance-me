@@ -39,14 +39,14 @@ class MIRNet:
                 self.test_low_images,
                 self.test_enhanced_images,
             ) = download_lol_dataset()
-            self._build_datasets(
-                low_images, enhanced_images, val_split=val_split, batch_size=batch_size
-            )
         self.data_loader = LowLightDataset(
             image_size=image_size,
             apply_random_horizontal_flip=apply_random_horizontal_flip,
             apply_random_vertical_flip=apply_random_vertical_flip,
             apply_random_rotation=apply_random_rotation,
+        )
+        self._build_datasets(
+            low_images, enhanced_images, val_split=val_split, batch_size=batch_size
         )
         if wandb_api_key is not None:
             init_wandb("mirnet", experiment_name, wandb_api_key)
