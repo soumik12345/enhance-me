@@ -1,7 +1,10 @@
 import os
 import wandb
-import tensorflow as tf
+from glob import glob
 import matplotlib.pyplot as plt
+
+import tensorflow as tf
+from tensorflow.keras import utils
 
 
 def read_image(image_path):
@@ -39,5 +42,22 @@ def closest_number(n, m):
 
 def init_wandb(project_name, experiment_name, wandb_api_key):
     if project_name is not None and experiment_name is not None:
-        os.environ['WANDB_API_KEY'] = wandb_api_key
+        os.environ["WANDB_API_KEY"] = wandb_api_key
         wandb.init(project=project_name, name=experiment_name)
+
+
+def download_lol_dataset():
+    utils.get_file(
+        "lol_dataset.zip",
+        "https://github.com/soumik12345/enhance-me/releases/download/v0.1/lol_dataset.zip",
+        cache_dir="./",
+        cache_subdir="./datasets",
+        extract=True,
+    )
+    low_images = sorted(glob("./datasets/lol_dataset/our485/low/*"))
+    enhanced_images = sorted(glob("./datasets/lol_dataset/our485/high/*"))
+    assert len(low_images) == len(enhanced_images)
+    test_low_images = sorted(glob("./datasets/lol_dataset/eval15/low/*"))
+    test_enhanced_images = sorted(glob("./datasets/lol_dataset/eval15/high/*"))
+    assert len(test_low_images) == len(test_enhanced_images)
+    return (low_images, enhanced_images), (test_low_images, test_enhanced_images)

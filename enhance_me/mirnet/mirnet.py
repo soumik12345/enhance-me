@@ -12,7 +12,12 @@ from wandb.keras import WandbCallback
 from .dataloader import LowLightDataset
 from .models import build_mirnet_model
 from .losses import CharbonnierLoss
-from ..commons import peak_signal_noise_ratio, closest_number, init_wandb
+from ..commons import (
+    peak_signal_noise_ratio,
+    closest_number,
+    init_wandb,
+    download_lol_dataset,
+)
 
 
 class MIRNet:
@@ -20,12 +25,15 @@ class MIRNet:
         self,
         experiment_name: str,
         image_size: int = 256,
+        dataset_label: str = "lol",
         apply_random_horizontal_flip: bool = True,
         apply_random_vertical_flip: bool = True,
         apply_random_rotation: bool = True,
         wandb_api_key=None,
     ) -> None:
         self.experiment_name = experiment_name
+        if dataset_label == "lol":
+            download_lol_dataset()
         self.data_loader = LowLightDataset(
             image_size=image_size,
             apply_random_horizontal_flip=apply_random_horizontal_flip,
