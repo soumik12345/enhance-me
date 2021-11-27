@@ -5,7 +5,7 @@ from typing import List
 from datetime import datetime
 
 from tensorflow import keras
-from tensorflow.keras import optimizers
+from tensorflow.keras import optimizers, models
 
 from wandb.keras import WandbCallback
 
@@ -74,6 +74,16 @@ class MIRNet:
             optimizer=optimizers.Adam(learning_rate=learning_rate),
             loss=CharbonnierLoss(epsilon=epsilon),
             metrics=[peak_signal_noise_ratio],
+        )
+
+    def load_model(
+        self, filepath, custom_objects=None, compile=True, options=None
+    ) -> None:
+        self.model = models.load_model(
+            filepath=filepath,
+            custom_objects=custom_objects,
+            compile=compile,
+            options=options,
         )
 
     def save_weights(self, filepath, overwrite=True, save_format=None, options=None):
