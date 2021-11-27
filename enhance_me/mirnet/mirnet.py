@@ -21,11 +21,7 @@ from ..commons import (
 
 
 class MIRNet:
-    def __init__(
-        self,
-        experiment_name: str,
-        wandb_api_key=None,
-    ) -> None:
+    def __init__(self, experiment_name: str, wandb_api_key=None) -> None:
         self.experiment_name = experiment_name
         if wandb_api_key is not None:
             init_wandb("mirnet", experiment_name, wandb_api_key)

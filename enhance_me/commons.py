@@ -43,7 +43,7 @@ def closest_number(n, m):
 def init_wandb(project_name, experiment_name, wandb_api_key):
     if project_name is not None and experiment_name is not None:
         os.environ["WANDB_API_KEY"] = wandb_api_key
-        wandb.init(project=project_name, name=experiment_name)
+        wandb.init(project=project_name, name=experiment_name, sync_tensorboard=True)
 
 
 def download_lol_dataset():
