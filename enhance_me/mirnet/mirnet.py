@@ -24,48 +24,39 @@ class MIRNet:
     def __init__(
         self,
         experiment_name: str,
-        image_size: int = 256,
-        dataset_label: str = "lol",
-        build_datasets: bool = True,
-        val_split: float = 0.2,
-        batch_size: int = 16,
-        apply_random_horizontal_flip: bool = True,
-        apply_random_vertical_flip: bool = True,
-        apply_random_rotation: bool = True,
         wandb_api_key=None,
     ) -> None:
         self.experiment_name = experiment_name
-        if dataset_label == "lol":
-            (low_images, enhanced_images), (
-                self.test_low_images,
-                self.test_enhanced_images,
-            ) = download_lol_dataset()
-        if build_datasets:
-            self.data_loader = LowLightDataset(
-                image_size=image_size,
-                apply_random_horizontal_flip=apply_random_horizontal_flip,
-                apply_random_vertical_flip=apply_random_vertical_flip,
-                apply_random_rotation=apply_random_rotation,
-            )
-            self._build_datasets(
-                low_images, enhanced_images, val_split=val_split, batch_size=batch_size
-            )
         if wandb_api_key is not None:
             init_wandb("mirnet", experiment_name, wandb_api_key)
             self.using_wandb = True
         else:
             self.using_wandb = False
 
-    def _build_datasets(
+    def build_datasets(
         self,
-        low_light_images: List[str],
-        enhanced_images: List[str],
+        image_size: int = 256,
+        dataset_label: str = "lol",
+        apply_random_horizontal_flip: bool = True,
+        apply_random_vertical_flip: bool = True,
+        apply_random_rotation: bool = True,
         val_split: float = 0.2,
         batch_size: int = 16,
     ):
+        if dataset_label == "lol":
+            (self.low_images, self.enhanced_images), (
+                self.test_low_images,
+                self.test_enhanced_images,
+            ) = download_lol_dataset()
+        self.data_loader = LowLightDataset(
+            image_size=image_size,
+            apply_random_horizontal_flip=apply_random_horizontal_flip,
+            apply_random_vertical_flip=apply_random_vertical_flip,
+            apply_random_rotation=apply_random_rotation,
+        )
         (self.train_dataset, self.val_dataset) = self.data_loader.get_datasets(
-            low_light_images=low_light_images,
-            enhanced_images=enhanced_images,
+            low_light_images=self.low_images,
+            enhanced_images=self.enhanced_images,
             val_split=val_split,
             batch_size=batch_size,
         )
