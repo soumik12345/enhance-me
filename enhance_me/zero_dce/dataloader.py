@@ -9,20 +9,31 @@ class UnpairedLowLightDataset:
     def __init__(
         self,
         image_size: int = 256,
+        apply_resize: bool = False,
         apply_random_horizontal_flip: bool = True,
         apply_random_vertical_flip: bool = True,
         apply_random_rotation: bool = True,
     ) -> None:
         self.augmentation_factory = UnpairedAugmentationFactory(image_size=image_size)
+        self.image_size = image_size
+        self.apply_resize = apply_resize
         self.apply_random_horizontal_flip = apply_random_horizontal_flip
         self.apply_random_vertical_flip = apply_random_vertical_flip
         self.apply_random_rotation = apply_random_rotation
 
+    def _resize(self, image):
+        return tf.image.resize(image, (self.image_size, self.image_size))
+
     def _get_dataset(self, images: List[str], batch_size: int, is_train: bool):
         dataset = tf.data.Dataset.from_tensor_slices((images))
         dataset = dataset.map(read_image, num_parallel_calls=tf.data.AUTOTUNE)
-        dataset = dataset.map(
-            self.augmentation_factory.random_crop, num_parallel_calls=tf.data.AUTOTUNE
+        dataset = (
+            dataset.map(
+                self.augmentation_factory.random_crop,
+                num_parallel_calls=tf.data.AUTOTUNE,
+            )
+            if not self.apply_resize
+            else dataset.map(self._resize, num_parallel_calls=tf.data.AUTOTUNE)
         )
         if is_train:
             dataset = (

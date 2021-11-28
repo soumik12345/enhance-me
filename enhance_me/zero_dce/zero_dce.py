@@ -113,6 +113,7 @@ class ZeroDCE(Model):
         self,
         image_size: int = 256,
         dataset_label: str = "lol",
+        apply_resize: bool = False,
         apply_random_horizontal_flip: bool = True,
         apply_random_vertical_flip: bool = True,
         apply_random_rotation: bool = True,
@@ -123,6 +124,7 @@ class ZeroDCE(Model):
             (self.low_images, _), (self.test_low_images, _) = download_lol_dataset()
         data_loader = UnpairedLowLightDataset(
             image_size,
+            apply_resize,
             apply_random_horizontal_flip,
             apply_random_vertical_flip,
             apply_random_rotation,
@@ -130,7 +132,7 @@ class ZeroDCE(Model):
         self.train_dataset, self.val_dataset = data_loader.get_datasets(
             self.low_images, val_split, batch_size
         )
-    
+
     def train(self, epochs: int):
         log_dir = os.path.join(
             self.experiment_name,
@@ -148,7 +150,7 @@ class ZeroDCE(Model):
             callbacks=callbacks,
         )
         return history
-    
+
     def infer(self, original_image):
         image = keras.preprocessing.image.img_to_array(original_image)
         image = image.astype("float32") / 255.0
@@ -157,7 +159,7 @@ class ZeroDCE(Model):
         output_image = tf.cast((output_image[0, :, :, :] * 255), dtype=np.uint8)
         output_image = Image.fromarray(output_image.numpy())
         return output_image
-    
+
     def infer_from_file(self, original_image_file: str):
         original_image = Image.open(original_image_file)
         return self.infer(original_image)
