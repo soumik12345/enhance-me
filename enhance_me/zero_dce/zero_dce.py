@@ -138,15 +138,7 @@ class ZeroDCE(Model):
             datetime.now().strftime("%Y%m%d-%H%M%S"),
         )
         tensorboard_callback = keras.callbacks.TensorBoard(log_dir, histogram_freq=1)
-        model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
-            os.path.join(self.experiment_name, "weights.h5"),
-            save_best_only=True,
-            save_weights_only=True,
-        )
-        callbacks = [
-            tensorboard_callback,
-            model_checkpoint_callback
-        ]
+        callbacks = [tensorboard_callback]
         if self.using_wandb:
             callbacks += [WandbCallback()]
         history = self.fit(
