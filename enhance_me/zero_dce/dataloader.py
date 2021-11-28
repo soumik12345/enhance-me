@@ -20,7 +20,7 @@ class UnpairedLowLightDataset:
     def _load_data(self, image_path):
         image = tf.io.read_file(image_path)
         image = tf.image.decode_png(image, channels=3)
-        image = image / 255.0
+        image = tf.cast(image, dtype=tf.float32) / 255.0
         return image
 
     def _get_dataset(self, images: List[str], batch_size: int, is_train: bool):
