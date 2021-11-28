@@ -149,7 +149,7 @@ class ZeroDCE(Model):
         ]
         if self.using_wandb:
             callbacks += [WandbCallback()]
-        history = self.model.fit(
+        history = self.fit(
             self.train_dataset,
             validation_data=self.val_dataset,
             epochs=epochs,
