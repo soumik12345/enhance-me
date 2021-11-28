@@ -1,19 +1,33 @@
+import os
+import numpy as np
+from PIL import Image
+from datetime import datetime
+
 import tensorflow as tf
+from tensorflow import keras
 from tensorflow.keras import optimizers, Model
+from wandb.keras import WandbCallback
 
 from .dce_net import build_dce_net
-from ..dataloader import UnpairedLowLightDataset
-from ..losses import (
+from .dataloader import UnpairedLowLightDataset
+from .losses import (
     color_constancy_loss,
     exposure_loss,
     illumination_smoothness_loss,
     SpatialConsistencyLoss,
 )
+from ..commons import download_lol_dataset, init_wandb
 
 
 class ZeroDCE(Model):
-    def __init__(self, **kwargs):
+    def __init__(self, experiment_name=None, wandb_api_key=None, **kwargs):
         super(ZeroDCE, self).__init__(**kwargs)
+        self.experiment_name = experiment_name
+        if wandb_api_key is not None:
+            init_wandb("mirnet", experiment_name, wandb_api_key)
+            self.using_wandb = True
+        else:
+            self.using_wandb = False
         self.dce_model = build_dce_net()
 
     def compile(self, learning_rate, **kwargs):
@@ -94,3 +108,64 @@ class ZeroDCE(Model):
             skip_mismatch=skip_mismatch,
             options=options,
         )
+
+    def build_datasets(
+        self,
+        image_size: int = 256,
+        dataset_label: str = "lol",
+        apply_random_horizontal_flip: bool = True,
+        apply_random_vertical_flip: bool = True,
+        apply_random_rotation: bool = True,
+        val_split: float = 0.2,
+        batch_size: int = 16,
+    ) -> None:
+        if dataset_label == "lol":
+            (self.low_images, _), (self.test_low_images, _) = download_lol_dataset()
+        data_loader = UnpairedLowLightDataset(
+            image_size,
+            apply_random_horizontal_flip,
+            apply_random_vertical_flip,
+            apply_random_rotation,
+        )
+        self.train_dataset, self.val_dataset = data_loader.get_datasets(
+            self.low_images, val_split, batch_size
+        )
+    
+    def train(self, epochs: int):
+        log_dir = os.path.join(
+            self.experiment_name,
+            "logs",
+            datetime.now().strftime("%Y%m%d-%H%M%S"),
+        )
+        tensorboard_callback = keras.callbacks.TensorBoard(log_dir, histogram_freq=1)
+        model_checkpoint_callback = keras.callbacks.ModelCheckpoint(
+            os.path.join(self.experiment_name, "weights.h5"),
+            save_best_only=True,
+            save_weights_only=True,
+        )
+        callbacks = [
+            tensorboard_callback,
+            model_checkpoint_callback
+        ]
+        if self.using_wandb:
+            callbacks += [WandbCallback()]
+        history = self.model.fit(
+            self.train_dataset,
+            validation_data=self.val_dataset,
+            epochs=epochs,
+            callbacks=callbacks,
+        )
+        return history
+    
+    def infer(self, original_image):
+        image = keras.preprocessing.image.img_to_array(original_image)
+        image = image.astype("float32") / 255.0
+        image = np.expand_dims(image, axis=0)
+        output_image = self.call(image)
+        output_image = tf.cast((output_image[0, :, :, :] * 255), dtype=np.uint8)
+        output_image = Image.fromarray(output_image.numpy())
+        return output_image
+    
+    def infer_from_file(self, original_image_file: str):
+        original_image = Image.open(original_image_file)
+        return self.infer(original_image)
