@@ -5,7 +5,11 @@ from .spatial_constancy import SpatialConsistencyLoss
 
 def color_constancy_loss(x):
     mean_rgb = tf.reduce_mean(x, axis=(1, 2), keepdims=True)
-    mean_r, mean_g, mean_b = mean_rgb[:, :, :, 0], mean_rgb[:, :, :, 1], mean_rgb[:, :, :, 2]
+    mean_r, mean_g, mean_b = (
+        mean_rgb[:, :, :, 0],
+        mean_rgb[:, :, :, 1],
+        mean_rgb[:, :, :, 2],
+    )
     diff_rg = tf.square(mean_r - mean_g)
     diff_rb = tf.square(mean_r - mean_b)
     diff_gb = tf.square(mean_b - mean_g)

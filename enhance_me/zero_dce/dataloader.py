@@ -17,7 +17,7 @@ class UnpairedLowLightDataset:
         self.apply_random_vertical_flip = apply_random_vertical_flip
         self.apply_random_rotation = apply_random_rotation
 
-    def load_data(self, image_path):
+    def _load_data(self, image_path):
         image = tf.io.read_file(image_path)
         image = tf.image.decode_png(image, channels=3)
         image = image / 255.0
@@ -25,7 +25,7 @@ class UnpairedLowLightDataset:
 
     def _get_dataset(self, images: List[str], batch_size: int, is_train: bool):
         dataset = tf.data.Dataset.from_tensor_slices((images))
-        dataset = dataset.map(self.load_data, num_parallel_calls=tf.data.AUTOTUNE)
+        dataset = dataset.map(self._load_data, num_parallel_calls=tf.data.AUTOTUNE)
         dataset = dataset.map(
             self.augmentation_factory.random_crop, num_parallel_calls=tf.data.AUTOTUNE
         )
