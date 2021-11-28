@@ -24,7 +24,7 @@ class ZeroDCE(Model):
         super(ZeroDCE, self).__init__(**kwargs)
         self.experiment_name = experiment_name
         if wandb_api_key is not None:
-            init_wandb("mirnet", experiment_name, wandb_api_key)
+            init_wandb("zero-dce", experiment_name, wandb_api_key)
             self.using_wandb = True
         else:
             self.using_wandb = False
