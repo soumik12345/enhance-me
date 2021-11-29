@@ -16,15 +16,25 @@ from .losses import (
     illumination_smoothness_loss,
     SpatialConsistencyLoss,
 )
-from ..commons import download_lol_dataset, init_wandb
+from ..commons import (
+    download_lol_dataset,
+    download_unpaired_low_light_dataset,
+    init_wandb,
+)
 
 
 class ZeroDCE(Model):
-    def __init__(self, experiment_name=None, wandb_api_key=None, use_mixed_precision: bool = False, **kwargs):
+    def __init__(
+        self,
+        experiment_name=None,
+        wandb_api_key=None,
+        use_mixed_precision: bool = False,
+        **kwargs
+    ):
         super(ZeroDCE, self).__init__(**kwargs)
         self.experiment_name = experiment_name
         if use_mixed_precision:
-            policy = mixed_precision.Policy('mixed_float16')
+            policy = mixed_precision.Policy("mixed_float16")
             mixed_precision.set_global_policy(policy)
         if wandb_api_key is not None:
             init_wandb("zero-dce", experiment_name, wandb_api_key)
@@ -125,6 +135,11 @@ class ZeroDCE(Model):
     ) -> None:
         if dataset_label == "lol":
             (self.low_images, _), (self.test_low_images, _) = download_lol_dataset()
+        elif dataset_label == "unpaired":
+            self.low_images, (
+                self.test_low_images,
+                _,
+            ) = download_unpaired_low_light_dataset()
         data_loader = UnpairedLowLightDataset(
             image_size,
             apply_resize,
