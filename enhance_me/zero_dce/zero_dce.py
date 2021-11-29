@@ -5,7 +5,7 @@ from datetime import datetime
 
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import optimizers, Model
+from tensorflow.keras import optimizers, mixed_precision, Model
 from wandb.keras import WandbCallback
 
 from .dce_net import build_dce_net
@@ -20,9 +20,12 @@ from ..commons import download_lol_dataset, init_wandb
 
 
 class ZeroDCE(Model):
-    def __init__(self, experiment_name=None, wandb_api_key=None, **kwargs):
+    def __init__(self, experiment_name=None, wandb_api_key=None, use_mixed_precision: bool = False, **kwargs):
         super(ZeroDCE, self).__init__(**kwargs)
         self.experiment_name = experiment_name
+        if use_mixed_precision:
+            policy = mixed_precision.Policy('mixed_float16')
+            mixed_precision.set_global_policy(policy)
         if wandb_api_key is not None:
             init_wandb("zero-dce", experiment_name, wandb_api_key)
             self.using_wandb = True
