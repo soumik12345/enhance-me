@@ -61,3 +61,18 @@ def download_lol_dataset():
     test_enhanced_images = sorted(glob("./datasets/lol_dataset/eval15/high/*"))
     assert len(test_low_images) == len(test_enhanced_images)
     return (low_images, enhanced_images), (test_low_images, test_enhanced_images)
+
+
+def download_unpaired_low_light_dataset():
+    utils.get_file(
+        "low_light_dataset.zip",
+        "https://github.com/soumik12345/enhance-me/releases/download/v0.3/low_light_dataset.zip",
+        cache_dir="./",
+        cache_subdir="./datasets",
+        extract=True,
+    )
+    low_images = glob("./datasets/low_light_dataset/*.png")
+    test_low_images = sorted(glob("./datasets/low_light_dataset/eval15/low/*"))
+    test_enhanced_images = sorted(glob("./datasets/low_light_dataset/eval15/high/*"))
+    assert len(test_low_images) == len(test_enhanced_images)
+    return low_images, (test_low_images, test_enhanced_images)

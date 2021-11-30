@@ -132,3 +132,5 @@ dmypy.json
 datasets/
 **.zip
 **.h5
+lol_dataset_**
+wandb**
