@@ -6,6 +6,7 @@ from datetime import datetime
 
 from tensorflow import keras
 from tensorflow.keras import optimizers, models, mixed_precision
+import wandb
 
 from wandb.keras import WandbCallback
 
@@ -133,6 +134,7 @@ class MIRNet:
             epochs=epochs,
             callbacks=callbacks,
         )
+        wandb.finish()
         return history
 
     def infer(
