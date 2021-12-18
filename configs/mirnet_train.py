@@ -12,8 +12,12 @@ def get_config() -> ml_collections.ConfigDict:
     config.use_mixed_precision = True  # Flag: Use Mixed-precision
     config.val_split = 0.1  # Validation Split
     config.batch_size = 4  # Batch Size
-    config.num_recursive_residual_groups = 3  # Number of recursive residual groups in MIRNet
-    config.num_multi_scale_residual_blocks = 2  # Number of multi-scale residual blocks in MIRNet
+    config.num_recursive_residual_groups = (
+        3  # Number of recursive residual groups in MIRNet
+    )
+    config.num_multi_scale_residual_blocks = (
+        2  # Number of multi-scale residual blocks in MIRNet
+    )
     config.learning_rate = 1e-4  # learning rate
     config.epsilon = 1e-3  # Constant for Charbonnier Loss
     config.epochs = 50  # Number of training epochs
