@@ -20,7 +20,7 @@ def main(_):
     zero_dce = ZeroDCE(
         experiment_name=FLAGS.wandb_experiment_name,
         wandb_api_key=None if FLAGS.wandb_api_key == "" else FLAGS.wandb_api_key,
-        use_mixed_precision=FLAGS.experiment_configs.use_mixed_precision
+        use_mixed_precision=FLAGS.experiment_configs.use_mixed_precision,
     )
     logging.info(f"Building {FLAGS.experiment_configs.dataset_label} Dataset...")
     zero_dce.build_datasets(
@@ -31,7 +31,7 @@ def main(_):
         apply_random_vertical_flip=FLAGS.experiment_configs.apply_random_vertical_flip,
         apply_random_rotation=FLAGS.experiment_configs.apply_random_rotation,
         val_split=FLAGS.experiment_configs.val_split,
-        batch_size=FLAGS.experiment_configs.batch_size
+        batch_size=FLAGS.experiment_configs.batch_size,
     )
     logging.info("Starting Zero-DCE Training...")
     zero_dce.compile(learning_rate=FLAGS.experiment_configs.learning_rate)

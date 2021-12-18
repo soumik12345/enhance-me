@@ -10,7 +10,7 @@ import wandb
 
 from wandb.keras import WandbCallback
 
-from .dataloader import LowLightDataset
+from ..base_dataloader import PairedDataLoader
 from .models import build_mirnet_model
 from .losses import CharbonnierLoss
 from ..commons import (
@@ -45,7 +45,7 @@ class MIRNet:
                 self.test_low_images,
                 self.test_enhanced_images,
             ) = download_lol_dataset()
-        self.data_loader = LowLightDataset(
+        self.data_loader = PairedDataLoader(
             image_size=image_size,
             apply_random_horizontal_flip=apply_random_horizontal_flip,
             apply_random_vertical_flip=apply_random_vertical_flip,

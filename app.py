@@ -55,7 +55,7 @@ def main():
                         "Zero-DCE (dce_weights_unpaired_128)",
                         "Zero-DCE (dce_weights_unpaired_128_resize)",
                         "Zero-DCE (dce_weights_unpaired_256)",
-                        "Zero-DCE (dce_weights_unpaired_256_resize)"
+                        "Zero-DCE (dce_weights_unpaired_256_resize)",
                     ),
                 )
                 if model_option != "":
@@ -68,7 +68,9 @@ def main():
                         st.sidebar.info("Done!")
                         st.image(enhanced_image, caption="enhanced image")
                     elif "Zero-DCE" in model_option:
-                        model_alias = model_option[model_option.find("(") + 1: model_option.find(")")]
+                        model_alias = model_option[
+                            model_option.find("(") + 1 : model_option.find(")")
+                        ]
                         st.sidebar.info("Loading Zero-DCE...")
                         zero_dce = get_zero_dce_object(model_alias)
                         st.sidebar.info("Done!")
